@@ -1,1 +1,27 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b52"><title>大比教務 v3.6</title><style>html,body{margin:0;min-height:100%;background:#f7f3ea;color:#102b52;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif}.loading{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}.card{max-width:460px;background:#fffdf8;border:1px solid #e4ded2;border-radius:20px;padding:28px;box-shadow:0 18px 48px rgba(16,43,82,.10)}h1{margin:0 0 10px;font-family:"Noto Serif TC","PMingLiU",serif}.dot{width:34px;height:34px;margin:18px auto;border:4px solid #ead9ad;border-top-color:#102b52;border-radius:50%;animation:s .8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}p{line-height:1.7;color:#6c7480}.err{color:#9f3a38;white-space:pre-wrap}</style></head><body><div class="loading"><div class="card"><h1>大比教務</h1><div class="dot"></div><p id="status">正在載入 v3.6…</p></div></div><script>(async()=>{const status=document.getElementById('status');try{const r=await fetch('./app-v3.6.html.gz.b64?v=360',{cache:'no-store'});if(!r.ok)throw new Error('找不到 v3.6 主程式（HTTP '+r.status+'）');const t=(await r.text()).trim();const bin=Uint8Array.from(atob(t),c=>c.charCodeAt(0));if(!('DecompressionStream' in window))throw new Error('目前瀏覽器版本不支援 v3.6 行動版載入方式，請更新 Safari 或 Chrome 後再試。');const stream=new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'));const html=await new Response(stream).text();if(!html.includes('v3.6'))throw new Error('主程式版本驗證失敗，請重新整理頁面。');document.open();document.write(html);document.close()}catch(e){status.className='err';status.textContent='載入失敗：'+e.message+'\n\n請重新整理一次；若仍失敗，請告訴我畫面上的錯誤文字。'}})();</script></body></html>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#102b52"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="大比教務"><title>大比教務 v3.6</title><style>html,body{margin:0;min-height:100%;background:#f7f3ea;color:#102b52;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif}.loading{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}.card{max-width:480px;background:#fffdf8;border:1px solid #e4ded2;border-radius:20px;padding:28px;box-shadow:0 18px 48px rgba(16,43,82,.10)}h1{margin:0 0 10px;font-family:"Noto Serif TC","PMingLiU",serif}.dot{width:34px;height:34px;margin:18px auto;border:4px solid #ead9ad;border-top-color:#102b52;border-radius:50%;animation:s .8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}p{line-height:1.7;color:#6c7480}.err{color:#9f3a38;white-space:pre-wrap}.hint{font-size:13px;color:#7a8190;margin-top:12px}</style></head><body><div class="loading"><div class="card"><h1>大比教務</h1><div class="dot" id="spinner"></div><p id="status">正在載入 v3.6…</p><p class="hint" id="hint">第一次開啟可能需要數秒。</p></div></div><script>
+(async()=>{
+ const status=document.getElementById('status'),spinner=document.getElementById('spinner'),hint=document.getElementById('hint');
+ const fail=(msg)=>{spinner.style.display='none';status.className='err';status.textContent='載入失敗：'+msg;hint.textContent='請關閉此頁後重新開啟；若仍失敗，請改用 Safari／Chrome 開啟同一網址。';};
+ const loadScript=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
+ try{
+   const r=await fetch('./app-v3.6.html.gz.b64?v=361',{cache:'no-store'});
+   if(!r.ok) throw new Error('找不到 v3.6 主程式（HTTP '+r.status+'）');
+   const t=(await r.text()).replace(/\s+/g,'');
+   let bin;
+   try{bin=Uint8Array.from(atob(t),c=>c.charCodeAt(0));}catch(e){throw new Error('主程式資料格式錯誤');}
+   let html='';
+   if('DecompressionStream' in window){
+     const stream=new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'));
+     html=await new Response(stream).text();
+   }else{
+     status.textContent='正在啟用相容模式…';
+     try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js');}
+     catch(e1){try{await loadScript('https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js');}catch(e2){throw new Error('此瀏覽器缺少解壓功能，且相容元件無法載入');}}
+     if(!window.pako) throw new Error('相容元件載入失敗');
+     html=window.pako.ungzip(bin,{to:'string'});
+   }
+   if(!html||!html.includes('v3.6')) throw new Error('主程式版本驗證失敗');
+   document.open();document.write(html);document.close();
+ }catch(e){fail(e&&e.message?e.message:String(e));}
+})();
+</script></body></html>
